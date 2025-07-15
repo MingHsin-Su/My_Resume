@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+    <title>空氣品質指標(AQI)概況</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+     <style>
+        /* CSS 樣式 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 100%; /* 讓 container 佔滿整個寬度 */
+            margin: 0px;
+            background-color: #fff;
+            padding: 4px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow-x: auto; /* 關鍵：啟用水平滾動 */
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+		
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 4px 0px; /* 減少 padding */
+            text-align: center;
+            vertical-align: middle; /* 文字垂直置中 */
+            white-space: nowrap; /* 關鍵：不換行 */
+            overflow: hidden; /* 隱藏超出範圍的文字 */
+            text-overflow: ellipsis; /* 以省略號顯示超出範圍的文字 */
+            font-size: 12px; /* 關鍵：縮小字體 */
+        }
+        th {
+            background-color: #59d89269;
+            font-weight: bold;
+            padding: 0.25rem 0.1rem; /* 左右間距縮小 */
+		    
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+      
+    </style>
+</head>
+<body>
+  <center>
+    <div class="container">
+        <h2>空氣品質指標(AQI)概況</h2>
+       
+        <table border="1">
+            <thead>
+                 <tr>
+                    <th>統計期</th>
+                    <th>統計區</th>
+                    <th>總站日數</th>
+                    <th>良好站日數</th>
+                    <th>普通站日數</th>
+                    <th>對敏感族群不健康站日數</th>
+                    <th>對所有族群不健康站日數</th>
+                    <th>非常不健康站日數</th>
+                    <th>危害站日數</th>
+                    <th>AQI>100日數比率</th>
+                </tr>
+            </thead>
+            <tbody id="row">
+                <!-- 資料將插入到這裡 -->
+            </tbody>
+        </table>
+    </div>
+	</center>
+</body>
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            url: 'https://data.moenv.gov.tw/api/v2/stat_p_115?api_key=e8dd42e6-9b8b-43f8-991e-b3dee723a52d&limit=1000&sort=ImportDate%20desc&format=JSON',
+            type: "GET",
+            dataType: "json",
+            success: function(data) {
+                const len = data.records.length;
+                console.log("資料長度:", len);
+
+                // 隱藏載入訊息
+                $("#loading").hide();
+
+                let html = "";
+                for (let i = 0; i < len; i++) {
+                    const record = data.records[i];
+
+                   html += `<tr>
+                                <td>${record.item1}</td>
+                                <td>${record.item2}</td>
+                                <td>${record.value1}</td>
+                                <td>${record.value2}</td>
+                                <td>${record.value3}</td>
+                                <td>${record.value4}</td>
+                                <td>${record.value5}</td>
+                                <td>${record.value6}</td>
+                                <td>${record.value7}</td>
+                                <td>${record.value8}</td>
+                            </tr>`;
+                }
+                $("#row").html(html);
+            },
+            error: function(xhr, status, error) {
+                console.error("請求失敗:", status, error);
+                $("#loading").text("資料載入失敗"); // 顯示錯誤訊息
+            }
+        });
+    });
+</script>
+</html>

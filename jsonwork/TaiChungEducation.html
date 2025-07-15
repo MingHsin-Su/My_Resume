@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>臺中市各機關單位教育程度統計資料</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        /* CSS 樣式 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 100%; /* 讓 container 佔滿整個寬度 */
+            margin: 5px 2px;
+            background-color: #fff;
+            padding: 6px 1px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            /* overflow-x: auto; */ /* 關鍵：啟用水平滾動 */
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+		p{
+		text-align: right;
+		 margin:10px 100px;
+		}
+        table {
+            width: 96%;
+            border-collapse: collapse;
+            margin-top: 14px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 4px; /* 減少 padding */
+            text-align: center;
+            vertical-align: middle; /* 文字垂直置中 */
+           
+            text-overflow: ellipsis; /* 以省略號顯示超出範圍的文字 */
+            font-size: 12px; /* 關鍵：縮小字體 */
+        }
+        th {
+            background-color: #3dda9e7d;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+<center>
+    <div class="container">
+        <h2>臺中市各機關單位教育程度統計資料</h2>
+       
+        <table border="1">
+            <thead>
+                <tr>
+                    
+                    <th>項目</th>
+                    <th>欄位名稱</th>
+                    <th>數值</th>
+                    <th>資料時間日期</th>
+                    <th>資料週期</th>
+                    <th>郵遞區號</th>
+                    <th>機關代碼</th>
+                    <th>電子郵件</th>
+                    <th>行動電話</th>
+                    <th>市話</th>
+                    <th>縣市別代碼</th>
+                    <th>行政區域代碼</th>
+                </tr>
+            </thead>
+            <tbody id="row">
+                <!-- 資料將插入到這裡 -->
+            </tbody>
+        </table>
+    </div>
+	</center>
+</body>
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            url: 'http://localhost:3000/TaiChungEducation',
+            type: "GET",
+            dataType: "json",
+            success: function(data) {
+                const len = data.length;
+                console.log("資料長度:", len);
+
+               
+
+                let html = "";
+                for (let i = 0; i < len; i++) {
+                    const record = data[i];
+
+                    html += `<tr>
+                               
+                                <td>${record.項目}</td>
+                                <td>${record.欄位名稱}</td>
+                                <td>${record.數值}</td>
+                                <td>${record["資料時間日期"]}</td>
+                                <td>${record.資料週期}</td>
+                                <td>${record.郵遞區號}</td>
+                                <td>${record.機關代碼}</td>
+                                <td>${record.電子郵件}</td>
+                                <td>${record.行動電話}</td>
+                                <td>${record.市話}</td>
+                                <td>${record.縣市別代碼}</td>
+                                <td>${record.行政區域代碼}</td>
+                            </tr>`;
+                }
+                $("#row").html(html);
+            },
+            error: function(xhr, status, error) {
+                console.error("請求失敗:", status, error);
+                $("#loading").text("資料載入失敗"); // 顯示錯誤訊息
+            }
+        });
+    });
+</script>
+</html>

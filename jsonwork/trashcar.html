@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>臺中市定時定點垃圾收運地點</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+   <style>
+        /* CSS 樣式 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f1f7;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #f4f0e4;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow-x: auto; /* 讓表格在水平方向上可滾動 */
+			
+    
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+			margin: 0 auto;
+			
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+            vertical-align: middle; /* 文字垂直置中 */
+            white-space: nowrap; /* 關鍵：不換行 */
+            overflow: hidden; /* 隱藏超出範圍的文字 */
+            text-overflow: ellipsis; /* 以省略號顯示超出範圍的文字 */
+			
+        }
+        th {
+            background-color: #e1ba7a;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+		tr:nth-child(odd) {
+			background-color: #ffffff; /*  白色背景 (或你想要的顏色)  */
+		}
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>臺中市定時定點垃圾收運地點</h2>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>區域</th>
+                    <th>里別</th>
+                    <th>車牌號碼</th>
+                    <th>地點</th>
+                    <th>任務類型</th>
+                    <th>開始時間</th>
+                    <th>結束時間</th>
+                </tr>
+            </thead>
+            <tbody id="row">
+                <!-- 資料將插入到這裡 -->
+            </tbody>
+        </table>
+    </div>
+</body>
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            url: 'https://datacenter.taichung.gov.tw/swagger/OpenData/68d1a87f-7baa-4b50-8408-c36a3a7eda68',
+            type: "GET",
+            dataType: "json",
+            success: function(data) {
+                const len = data.length;
+                console.log("資料長度:", len);
+
+                let html = "";
+                for (let i = 0; i < len; i++) {
+                    const record = data[i];
+
+                    html += `<tr>
+                                <td>${record.area}</td>
+                                <td>${record.village}</td>
+                                <td>${record.car_licence}</td>
+                                <td>${record.caption}</td>
+                                <td>${record.task_type}</td>
+                                <td>${record.g_d1_time_s}</td>
+                                <td>${record.g_d1_time_e}</td>
+                            </tr>`;
+                }
+                $("#row").html(html);
+            },
+            error: function(xhr, status, error) {
+                console.error("請求失敗:", status, error);
+                $("#loading").text("資料載入失敗"); // 顯示錯誤訊息
+            }
+        });
+    });
+</script>
+</html>

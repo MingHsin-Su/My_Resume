@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>室內空氣品質公告場所定期檢測結果</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+     <style>
+        /* CSS 樣式 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 90%; /* 讓 container 佔滿整個寬度 */
+            margin: 0px;
+            background-color: #fff;
+            padding: 4px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow-x: auto; /* 關鍵：啟用水平滾動 */
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+		
+        table {
+            width: 90%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 4px 0px; /* 減少 padding */
+            text-align: center;
+            vertical-align: middle; /* 文字垂直置中 */
+            white-space: nowrap; /* 關鍵：不換行 */
+            overflow: hidden; /* 隱藏超出範圍的文字 */
+            text-overflow: ellipsis; /* 以省略號顯示超出範圍的文字 */
+            font-size: 12px; /* 關鍵：縮小字體 */
+        }
+        th {
+            background-color: #59d89269;
+            font-weight: bold;
+            padding: 0.25rem 0.1rem; /* 左右間距縮小 */
+		    
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+      
+    </style>
+</head>
+<body>
+  <center>
+    <div class="container">
+        <h2>室內空氣品質公告場所定期檢測結果</h2>
+       
+        <table border="1">
+            <thead>
+                <tr>
+				    <th>監測日期</th>
+                    <th>測站編號</th>
+                    <th>測站名稱</th>
+                   
+                    <th>空氣品質指標</th>
+                    <th>二氧化硫副指標</th>
+                    <th>一氧化碳副指標</th>
+                  
+                    <th>懸浮微粒副指標</th>
+                    <th>二氧化氮副指標</th>
+                    <th>臭氧8小時副指標</th>
+                    <th>細懸浮微粒副指標</th>
+                </tr>
+            </thead>
+            <tbody id="row">
+                <!-- 資料將插入到這裡 -->
+            </tbody>
+        </table>
+    </div>
+	</center>
+</body>
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            url: 'https://data.moenv.gov.tw/api/v2/aqx_p_434?api_key=58d6040c-dca7-407f-a244-d0bfdfa8144a&limit=1000&sort=monitordate%20desc&format=JSON',
+            type: "GET",
+            dataType: "json",
+            success: function(data) {
+                const len = data.records.length;
+                console.log("資料長度:", len);
+
+            
+
+                let html = "";
+                for (let i = 0; i < len; i++) {
+                    const record = data.records[i];
+
+                    html += `<tr>
+					            <td>${record.monitordate}</td>
+                                <td>${record.siteid}</td>
+                                <td>${record.sitename}</td>
+                               
+                                <td>${record.aqi}</td>
+                                <td>${record.so2subindex}</td>
+                                <td>${record.cosubindex}</td>
+                              
+                                <td>${record.pm10subindex}</td>
+                                <td>${record.no2subindex}</td>
+                                <td>${record.o38subindex}</td>
+                                <td>${record.pm25subindex}</td>
+                            </tr>`;
+                }
+                $("#row").html(html);
+            },
+            error: function(xhr, status, error) {
+                console.error("請求失敗:", status, error);
+                $("#loading").text("資料載入失敗"); // 顯示錯誤訊息
+            }
+        });
+    });
+</script>
+</html>

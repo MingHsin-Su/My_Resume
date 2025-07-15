@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>臺北捷運車站資訊</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        /* CSS 樣式 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 90%;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow-x: auto; /* 讓表格在水平方向上可滾動 */
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            table-layout: fixed; /* 關鍵：固定表格佈局 */
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 4px; /* 減少 padding */
+            text-align: center;
+            vertical-align: middle; /* 文字垂直置中 */
+            white-space: nowrap; /* 關鍵：不換行 */
+            overflow: hidden; /* 隱藏超出範圍的文字 */
+            text-overflow: ellipsis; /* 以省略號顯示超出範圍的文字 */
+            font-size: 12px; /* 關鍵：縮小字體 */
+        }
+        th {
+            background-color: #c7d779;
+            font-weight: bold;
+            /* 根據資料長度設定欄位寬度 */
+            width: 100px; /* 範例：根據資料長度調整 */
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>臺北捷運車站資訊</h1>
+        <div id="loading" class="loading">載入中...</div>  <!-- 顯示載入訊息 -->
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>車站</th>
+                    <th>車站英文</th>
+                    <th>目的地</th>
+                    <th>目的地英文</th>
+                    <th>更新時間</th>
+                    <!--  可以根據需要增加更多欄位 -->
+                </tr>
+            </thead>
+            <tbody id="row">
+                <!-- 資料將插入到這裡 -->
+            </tbody>
+        </table>
+    </div>
+</body>
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            url: 'http://localhost:3000/TaipaiMRT',
+            type: "GET",
+            dataType: "json",
+            success: function(data) {
+                const len = data.length;
+                console.log("資料長度:", len);
+
+                // 隱藏載入訊息
+                $("#loading").hide();
+
+                let html = "";
+                for (let i = 0; i < len; i++) {
+                    const record = data[i];
+
+                    html += `<tr>
+                                <td>${record.Station}</td>
+                                <td>${record.StationEn}</td>
+                                <td>${record.Destination}</td>
+                                <td>${record.DestinationEn}</td>
+                                <td>${record.UpdateTime}</td>
+                                <!--  可以根據需要增加更多欄位 -->
+                            </tr>`;
+                }
+                $("#row").html(html);
+            },
+            error: function(xhr, status, error) {
+                console.error("請求失敗:", status, error);
+                $("#loading").text("資料載入失敗"); // 顯示錯誤訊息
+            }
+        });
+    });
+</script>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>空氣品質公告場所定檢資訊</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        /* CSS 樣式 */
+        body {
+            font-family: Arial, sans-serif;
+            margin:0px;
+            padding:0x;
+            background-color: #ebecbd8c;
+        }
+        .container {
+            width: 95%; /* 讓 container 佔滿整個寬度 */
+            margin: 0px;
+            background-color: #fff;
+            padding: 6px 1px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            /* overflow-x: auto; */ /* 關鍵：啟用水平滾動 */
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+		p{
+		text-align: right;
+		 margin:10px 100px;
+		}
+        table {
+            width: 95%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            padding: 1px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 4px; /* 減少 padding */
+            text-align: center;
+            vertical-align: middle; /* 文字垂直置中 */
+           
+            text-overflow: ellipsis; /* 以省略號顯示超出範圍的文字 */
+            font-size: 12px; /* 關鍵：縮小字體 */
+        }
+        th {
+            background-color: #3dda9e7d;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <center>
+    <div class="container">
+        <h2>空氣品質公告場所定檢資訊</h2>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>公告場所編號</th>
+                    <th>公告場所名稱</th>
+                    <th>定檢點名稱</th>
+                    <th>定檢時間</th>
+                    <th>檢驗測定機構</th>
+                    <th>檢驗項目名稱</th>
+                    <th>檢驗項目單位</th>
+                    <th>定檢濃度值</th>
+                </tr>
+            </thead>
+            <tbody id="row">
+                <!-- 資料將插入到這裡 -->
+            </tbody>
+        </table>
+		</center>
+    </div>
+	
+</body>
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            url: 'https://data.moenv.gov.tw/api/v2/aqx_p_305?api_key=58d6040c-dca7-407f-a244-d0bfdfa8144a&limit=1000&sort=ImportDate%20desc&format=JSON',
+            type: "GET",
+            dataType: "json",
+            success: function(data) {
+                const len = data.records.length;
+                console.log("資料長度:", len);
+
+                let html = "";
+                for (let i = 0; i < len; i++) {
+                    const record = data.records[i]; // 取得單筆資料
+
+                    html += `<tr>
+                                <td>${record.placeid}</td>
+                                <td>${record.placename}</td>
+                                <td>${record.inspect_placename}</td>
+                                <td>${record.inspecttime}</td>
+                                <td>${record.inspect_people}</td>
+                                <td>${record.exam_name}</td>
+                                <td>${record.exam_unit}</td>
+                                <td>${record.value}</td>
+                            </tr>`;
+                }
+                $("#row").html(html);
+            },
+            error: function(xhr, status, error) {
+                console.error("請求失敗:", status, error);
+                $("#row").html("<tr><td colspan='8'>資料載入失敗</td></tr>"); // 顯示錯誤訊息
+            }
+        });
+    });
+</script>
+</html>

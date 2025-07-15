@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>環境部廢污水資料</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   <style>
+        /* CSS 樣式 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 90%; /* 讓 container 佔滿整個寬度 */
+            margin: 0px;
+            background-color: #fff;
+            padding: 4px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow-x: auto; /* 關鍵：啟用水平滾動 */
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+		
+        table {
+            width: 90%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 4px 0px; /* 減少 padding */
+            text-align: center;
+            vertical-align: middle; /* 文字垂直置中 */
+            white-space: nowrap; /* 關鍵：不換行 */
+            overflow: hidden; /* 隱藏超出範圍的文字 */
+            text-overflow: ellipsis; /* 以省略號顯示超出範圍的文字 */
+            font-size: 12px; /* 關鍵：縮小字體 */
+        }
+        th {
+            background-color: #59d89269;
+            font-weight: bold;
+            padding: 0.25rem 0.1rem; /* 左右間距縮小 */
+		    
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+      
+    </style>
+</head>
+<body><center>
+
+<h2>廢污水產生與排放統計資料</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>統計期</th>
+      <th>統計區</th>
+      <th>總產生量</th>
+      <th>市鎮產生量</th>
+      <th>工業產生量</th>
+      <th>農業產生量</th>
+      <th>總排放量</th>
+      <th>市鎮排放量</th>
+      <th>工業排放量</th>
+      <th>農業排放量</th>
+    </tr>
+  </thead>
+  <tbody id="data-body"></tbody>
+</table>
+
+<script>
+$(document).ready(function(){
+    $.ajax({
+        url: "https://data.moenv.gov.tw/api/v2/stat_p_119?api_key=e8dd42e6-9b8b-43f8-991e-b3dee723a52d&limit=1000&sort=ImportDate%20desc&format=JSON",
+        type: "get",
+        dataType: "json",
+        success: function(info) {
+            const records = info.records;
+            records.forEach(function(item) {
+                const row = `
+                    <tr>
+                        <td>${item.item1}</td>
+                        <td>${item.item2}</td>
+                        <td>${item.value1}</td>
+                        <td>${item.value2}</td>
+                        <td>${item.value3}</td>
+                        <td>${item.value4}</td>
+                        <td>${item.value5}</td>
+                        <td>${item.value6}</td>
+                        <td>${item.value7}</td>
+                        <td>${item.value8}</td>
+                    </tr>`;
+                $('#data-body').append(row);
+            });
+        },
+			/*-----------------for()方法-------------------
+		   len=data.records.length;
+		    console.log(len);
+            console.log("請求成功");
+			
+			  for(i=0;i<len;i++){
+		    
+		     $("#row").append(
+
+
+		"<tr><td>"+data.records[i].item1+"</td>"+
+			"<td>"+data.records[i].item2+"</td>"+
+			"<td>"+data.records[i].value1+"</td>"+
+			"<td>"+data.records[i].value2+"</td>"+
+			"<td>"+data.records[i].value3+"</td>"+
+			"<td>"+data.records[i].value4+"</td>"+
+			"<td>"+data.records[i].value5+"</td>"+
+			"<td>"+data.records[i].value6+"</td>"+
+			"<td>"+data.records[i].value7+"</td>"+
+			"<td>"+data.records[i].value8+"</td></tr>"
+			);
+			}
+        },*/
+        error: function() {
+            console.log("請求失敗");
+        }
+    });
+});
+</script>
+<center>
+</body>
+</html>
+
+
+	
+		
+	
